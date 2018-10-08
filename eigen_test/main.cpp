@@ -19,10 +19,11 @@ void Matrix_Init_Test2(int n);
 void Matrix_Init_Test3();
 void Vector_Init_Test();
 void Matrix_RowCol_Major_Test();
-void Matrix_speed_check();
+void Matrix_speed_check(int n);
 void Matrix_Copy_Swap_Test();
 MatrixXd Matrix_Subroutine_Survival_Test1();
 MatrixXd* Matrix_Subroutine_Survival_Test2();
+void Matrix_memory_check(int n);
 
 int main(int argc, const char * argv[]) {
     
@@ -36,11 +37,14 @@ int main(int argc, const char * argv[]) {
 //    cout << A << endl;
 	
 	
-	MatrixXd A1 = Matrix_Subroutine_Survival_Test1();
-	MatrixXd* A2 = Matrix_Subroutine_Survival_Test2();
-	PRINT_MAT(A1);
-	PRINT_MAT(*A2);
-	//どちらでも正しく返すことができる -> 解放ができていないのでは？
+//	MatrixXd A1 = Matrix_Subroutine_Survival_Test1();
+//	MatrixXd* A2 = Matrix_Subroutine_Survival_Test2();
+//	PRINT_MAT(A1);
+//	PRINT_MAT(*A2);
+//	//どちらでも正しく返すことができる -> 解放ができていないのでは？
+	
+	Matrix_memory_check(100000);
+	//なぜだかわからないが，メモリの解放はできているらしい．
 	
     return 0;
 }
@@ -145,16 +149,17 @@ void Matrix_RowCol_Major_Test(){
     cout << endl;
 }
 
-void Matrix_speed_check(){
+void Matrix_speed_check(int n){
 	int k;
 	clock_t start = clock();
 	MatrixXd A = MatrixXd::Random(500,500);        // ランダム
 	MatrixXd B(500,500);
-	for(k = 0; k < 100; k++){
+	for(k = 0; k < n; k++){
 		B = A * A;
 	}
 	clock_t end = clock();
 	cout << "time = " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n" << "\n";
+	getchar();
 }
 
 void Matrix_Copy_Swap_Test(){
@@ -196,3 +201,14 @@ MatrixXd* Matrix_Subroutine_Survival_Test2(){
 	return A2;
 }
 
+void Matrix_memory_check(int n){
+	int k;
+	clock_t start = clock();
+	MatrixXd A;
+	for(k = 0; k < n; k++){
+		A = Matrix_Subroutine_Survival_Test1();
+	}
+	clock_t end = clock();
+	cout << "time = " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n" << "\n";
+	getchar();
+}
