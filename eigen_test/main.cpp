@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <time.h>
 #include <Eigen/Core>
 #define PRINT_MAT(X) cout << #X << ":\n" << X << endl << endl
 #define PRINT_MAT2(X,DESC) cout << DESC << ":\n" << X << endl << endl
@@ -18,6 +19,8 @@ void Matrix_Init_Test2(int n);
 void Matrix_Init_Test3();
 void Vector_Init_Test();
 void Matrix_RowCol_Major_Test();
+void Matrix_speed_check();
+void Matrix_Copy_Swap_Test();
 
 int main(int argc, const char * argv[]) {
     
@@ -29,14 +32,14 @@ int main(int argc, const char * argv[]) {
 //    B(1,0) = 5;
     
 //    cout << A << endl;
-    
-    Matrix_RowCol_Major_Test();
-    
+	
+	
+	Matrix_Copy_Swap_Test();
+	
     return 0;
 }
 
-void Matrix_Init_Test1()
-{
+void Matrix_Init_Test1(){
     /* 行列クラスの初期化 */
     Matrix3i A;  // 3x3 の int 型行列
     
@@ -136,3 +139,35 @@ void Matrix_RowCol_Major_Test(){
     cout << endl;
 }
 
+void Matrix_speed_check(){
+	int k;
+	clock_t start = clock();
+	MatrixXd A = MatrixXd::Random(500,500);        // ランダム
+	MatrixXd B(500,500);
+	for(k = 0; k < 100; k++){
+		B = A * A;
+	}
+	clock_t end = clock();
+	cout << "time = " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n" << "\n";
+}
+
+void Matrix_Copy_Swap_Test()
+{
+	/* コピーおよびスワップ（交換）*/
+	PRINT_FNC;
+	
+	MatrixXd A_orig = MatrixXd::Random(3,3);
+	MatrixXd A_dump = A_orig;  /* ディープコピー（参照でない！） */
+	
+	A_orig(0,0) = 1111;
+	
+	/* 一方を変更しても他方には影響しない */
+	PRINT_MAT(A_orig);
+	PRINT_MAT(A_dump);
+	
+	/* スワッピング！ */
+	cout << "  (Swapping A_orig <--> A_dump)" << endl << endl;
+	A_orig.swap(A_dump);
+	PRINT_MAT(A_orig);
+	PRINT_MAT(A_dump);
+}
