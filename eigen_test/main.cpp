@@ -21,6 +21,8 @@ void Vector_Init_Test();
 void Matrix_RowCol_Major_Test();
 void Matrix_speed_check();
 void Matrix_Copy_Swap_Test();
+MatrixXd Matrix_Subroutine_Survival_Test1();
+MatrixXd* Matrix_Subroutine_Survival_Test2();
 
 int main(int argc, const char * argv[]) {
     
@@ -34,7 +36,11 @@ int main(int argc, const char * argv[]) {
 //    cout << A << endl;
 	
 	
-	Matrix_Copy_Swap_Test();
+	MatrixXd A1 = Matrix_Subroutine_Survival_Test1();
+	MatrixXd* A2 = Matrix_Subroutine_Survival_Test2();
+	PRINT_MAT(A1);
+	PRINT_MAT(*A2);
+	//どちらでも正しく返すことができる -> 解放ができていないのでは？
 	
     return 0;
 }
@@ -151,8 +157,7 @@ void Matrix_speed_check(){
 	cout << "time = " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n" << "\n";
 }
 
-void Matrix_Copy_Swap_Test()
-{
+void Matrix_Copy_Swap_Test(){
 	/* コピーおよびスワップ（交換）*/
 	PRINT_FNC;
 	
@@ -171,3 +176,23 @@ void Matrix_Copy_Swap_Test()
 	PRINT_MAT(A_orig);
 	PRINT_MAT(A_dump);
 }
+
+MatrixXd Matrix_Subroutine_Survival_Test1(){
+	PRINT_FNC;
+	
+	MatrixXd A1 = MatrixXd::Random(3,3);
+	PRINT_MAT(A1);
+	
+	return A1;
+}
+
+MatrixXd* Matrix_Subroutine_Survival_Test2(){
+	PRINT_FNC;
+	
+	MatrixXd* A2; A2 = new MatrixXd(3,3);
+	MatrixXd B = MatrixXd::Random(3,3); *A2 = B;
+	PRINT_MAT(*A2);
+	
+	return A2;
+}
+
