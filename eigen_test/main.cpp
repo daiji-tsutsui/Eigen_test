@@ -9,6 +9,7 @@
 #include <iostream>
 #include <time.h>
 #include <Eigen/Core>
+//#include <Eigen/Geometry>
 #define PRINT_MAT(X) cout << #X << ":\n" << X << endl << endl
 #define PRINT_MAT2(X,DESC) cout << DESC << ":\n" << X << endl << endl
 #define PRINT_FNC    cout << "[" << __func__ << "]" << endl
@@ -24,6 +25,12 @@ void Matrix_Copy_Swap_Test();
 MatrixXd Matrix_Subroutine_Survival_Test1();
 MatrixXd* Matrix_Subroutine_Survival_Test2();
 void Matrix_memory_check(int n);
+void Array_Calculation_Test();
+void Matrix_To_Vector_Test();
+void Matrix_Rowwise_Test();
+void Matrix_Block_Test();
+void Matrix_Block_Subst_Test();
+void Matrix_Row_Col_Subst_Test();
 
 int main(int argc, const char * argv[]) {
     
@@ -33,7 +40,6 @@ int main(int argc, const char * argv[]) {
 //    MatrixXf B(2,2); B.setZero();
 //    B(0,1) = 2;
 //    B(1,0) = 5;
-    
 //    cout << A << endl;
 	
 	
@@ -43,8 +49,11 @@ int main(int argc, const char * argv[]) {
 //	PRINT_MAT(*A2);
 //	//どちらでも正しく返すことができる -> 解放ができていないのでは？
 	
-	Matrix_memory_check(100000);
-	//なぜだかわからないが，メモリの解放はできているらしい．
+//	Matrix_memory_check(100000);
+//	//なぜだかわからないが，メモリの解放はできているらしい．
+	
+	
+	Matrix_Row_Col_Subst_Test();
 	
     return 0;
 }
@@ -206,9 +215,92 @@ void Matrix_memory_check(int n){
 	clock_t start = clock();
 	MatrixXd A;
 	for(k = 0; k < n; k++){
-		A = Matrix_Subroutine_Survival_Test1();
+		A = Matrix_Subroutine_Survival_Test1();	//代入処理のときに元のAのメモリは解放される？
 	}
 	clock_t end = clock();
 	cout << "time = " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n" << "\n";
 	getchar();
+}
+
+void Array_Calculation_Test(){
+	MatrixXd A = MatrixXd::Random(3,3);
+	PRINT_MAT(A);
+	PRINT_MAT(A * A);
+	
+	MatrixXd B;
+	B = A.array() * A.array();
+	PRINT_MAT(B);
+	
+	PRINT_MAT(A.array().pow(2.0));
+	
+	PRINT_MAT(A);
+	PRINT_MAT(A.array().min(0.5).max(-0.5));
+	PRINT_MAT((A.array() > 0.0));
+	
+	ArrayXXd X = A;
+	PRINT_MAT(X);
+	PRINT_MAT(X.min(0.5).max(-0.5));
+	PRINT_MAT((X > 0.0));
+	
+}
+
+void Matrix_To_Vector_Test(){
+	MatrixXd A;
+	VectorXd v = VectorXd::Random(3);
+	
+	PRINT_MAT(v);
+	A = v;
+	PRINT_MAT(A);
+}
+
+void Matrix_Rowwise_Test(){
+	MatrixXd A = MatrixXd::Random(3,4);
+	VectorXd v(4);
+	v << 1, 2, 3, 4;
+	
+	PRINT_MAT(A);
+	A.rowwise() += v.transpose();	// rowwiseで足したければ，横ベクトルでなくてはならない．
+	PRINT_MAT(A);
+}
+
+void Matrix_Block_Test(){
+	MatrixXd m(4,4);
+	m <<  1, 2, 3, 4,
+		5, 6, 7, 8,
+		9,10,11,12,
+		13,14,15,16;
+	cout << "Block in the middle" << endl;
+	cout << m.block<2,2>(1,1) << endl << endl;
+	for (int i = 1; i <= 4; ++i) {
+		cout << "Block of size " << i << "x" << i << endl;
+		cout << m.block(0,0,i,i) << endl << endl;
+	}
+}
+
+void Matrix_Block_Subst_Test(){
+//	ArrayXXd a = ArrayXXd::Constant(4,4,0.1);	//Arrayでも同様．
+	MatrixXd a = MatrixXd::Constant(4,4,0.1);
+	PRINT_MAT(a);
+	
+	MatrixXd m(2,2);
+	m <<  1, 2,
+		3, 4;
+	PRINT_MAT(m);
+	
+	a.block<2,2>(1,1) = m;
+	PRINT_MAT(a);
+	
+	a.block(0,0,2,3) = a.block(2,1,2,3);
+	PRINT_MAT(a);
+}
+
+void Matrix_Row_Col_Subst_Test(){
+	MatrixXd m(3,3);
+	m << 1,2,3,
+		4,5,6,
+		7,8,9;
+	PRINT_MAT2(m,"Here is the matrix m:");
+	PRINT_MAT(m.row(1));
+	m.col(2) += 3 * m.col(0);
+	PRINT_MAT2(m,"m.col(2) += 3 * m.col(0)");
 }
