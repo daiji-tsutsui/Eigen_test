@@ -31,6 +31,9 @@ void Matrix_Rowwise_Test();
 void Matrix_Block_Test();
 void Matrix_Block_Subst_Test();
 void Matrix_Row_Col_Subst_Test();
+void Matrix_Row_Col_Calc_Test();
+void Matrix_log_product_Test();
+void Matrix_colwise_initialize_Test();
 
 int main(int argc, const char * argv[]) {
     
@@ -52,8 +55,7 @@ int main(int argc, const char * argv[]) {
 //	Matrix_memory_check(100000);
 //	//なぜだかわからないが，メモリの解放はできているらしい．
 	
-	
-	Matrix_Row_Col_Subst_Test();
+	Matrix_colwise_initialize_Test();
 	
     return 0;
 }
@@ -247,10 +249,14 @@ void Array_Calculation_Test(){
 void Matrix_To_Vector_Test(){
 	MatrixXd A;
 	VectorXd v = VectorXd::Random(3);
-	
 	PRINT_MAT(v);
 	A = v;
 	PRINT_MAT(A);
+	
+	A = MatrixXd::Random(3, 1);
+	PRINT_MAT(A);
+	v = A;
+	PRINT_MAT(v);
 }
 
 void Matrix_Rowwise_Test(){
@@ -303,4 +309,49 @@ void Matrix_Row_Col_Subst_Test(){
 	PRINT_MAT(m.row(1));
 	m.col(2) += 3 * m.col(0);
 	PRINT_MAT2(m,"m.col(2) += 3 * m.col(0)");
+}
+
+void Matrix_Row_Col_Calc_Test(){
+	VectorXd v(3); v << 1,2,3;
+	VectorXd exp_v = (v.array() - v.maxCoeff()).exp();
+	VectorXd sm_v = exp_v / exp_v.sum();
+	PRINT_MAT(v);
+	PRINT_MAT(exp_v);
+	PRINT_MAT(sm_v);
+	
+	MatrixXd A(3,3);
+	A << 1, 2, 3,
+		4, 5, 6,
+		7, 8, 9;
+	MatrixXd exp_A = (A.colwise() - A.rowwise().maxCoeff()).array().exp();
+	MatrixXd sm_A = exp_A.array().colwise() * (exp_A.rowwise().sum()).array().inverse();
+	PRINT_MAT(A);
+	PRINT_MAT(exp_A);
+	PRINT_MAT(sm_A);
+}
+
+void Matrix_log_product_Test(){
+	MatrixXd A = MatrixXd::Random(4,4);
+	A = A.array() - A.minCoeff() + 0.1;
+	VectorXd v = VectorXd::Random(4);
+	v = v.array() - v.minCoeff() + 0.1;
+	VectorXd u;
+	
+	PRINT_MAT(A);
+	PRINT_MAT(v);
+	PRINT_MAT(A*v);
+	
+	MatrixXd log_A = A.array().log();
+	VectorXd log_v = v.array().log();
+	PRINT_MAT(((log_A.rowwise() + log_v.transpose()).array().exp()).rowwise().sum());
+}
+
+void Matrix_colwise_initialize_Test(){
+	Matrix<double,3,1> v[3];
+	for(int i = 0; i < 3; i++){
+		v[i] << 1,2,3;
+	}
+	Matrix<double,3,3> a;
+	a << v[0], v[1], v[2];
+	PRINT_MAT(a);
 }
