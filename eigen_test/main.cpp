@@ -9,6 +9,7 @@
 #include <iostream>
 #include <time.h>
 #include <Eigen/Core>
+#include <Eigen/Eigenvalues>
 //#include <Eigen/Geometry>
 #define PRINT_MAT(X) cout << #X << ":\n" << X << endl << endl
 #define PRINT_MAT2(X,DESC) cout << DESC << ":\n" << X << endl << endl
@@ -31,6 +32,8 @@ void Matrix_Rowwise_Test();
 void Matrix_Block_Test();
 void Matrix_Block_Subst_Test();
 void Matrix_Row_Col_Subst_Test();
+void Matrix_Row_Vector_Test();
+void Matrix_Append_Test();
 
 int main(int argc, const char * argv[]) {
     
@@ -53,7 +56,7 @@ int main(int argc, const char * argv[]) {
 //	//なぜだかわからないが，メモリの解放はできているらしい．
 	
 	
-	Matrix_Row_Col_Subst_Test();
+    Matrix_To_Vector_Test();
 	
     return 0;
 }
@@ -241,7 +244,13 @@ void Array_Calculation_Test(){
 	PRINT_MAT(X);
 	PRINT_MAT(X.min(0.5).max(-0.5));
 	PRINT_MAT((X > 0.0));
-	
+    
+    B = A.transpose() * A;
+    PRINT_MAT2(B,"B = A^T * A");
+//    PRINT_MAT(B.sqrt());    //Undefined template
+    SelfAdjointEigenSolver<MatrixXd> es(B);
+    PRINT_MAT(es.operatorSqrt());
+    PRINT_MAT(es.operatorSqrt() * es.operatorSqrt());
 }
 
 void Matrix_To_Vector_Test(){
@@ -251,6 +260,20 @@ void Matrix_To_Vector_Test(){
 	PRINT_MAT(v);
 	A = v;
 	PRINT_MAT(A);
+    
+    A = MatrixXd::Random(3,2);
+    PRINT_MAT(A);
+//    v = A;    //error
+    Map<VectorXd> w(A.data(), A.size());
+    PRINT_MAT(w);
+    
+    for(int i=0; i<A.cols(); ++i){
+        A.col(i) = w.block(A.rows()*i,0,A.rows(),1);
+    }
+    PRINT_MAT(A);
+    
+//    MatrixXd B(w);
+//    PRINT_MAT(B);
 }
 
 void Matrix_Rowwise_Test(){
@@ -303,4 +326,23 @@ void Matrix_Row_Col_Subst_Test(){
 	PRINT_MAT(m.row(1));
 	m.col(2) += 3 * m.col(0);
 	PRINT_MAT2(m,"m.col(2) += 3 * m.col(0)");
+}
+
+void Matrix_Row_Vector_Test(){
+    MatrixXd A = MatrixXd::Random(3,10);
+    PRINT_MAT(A);
+    PRINT_MAT(A(5));
+    PRINT_MAT(A.block(0,0,1,10));
+}
+
+void Matrix_Append_Test(){
+    MatrixXd A(0,10);
+    PRINT_MAT(A);
+    
+    for(int i=0; i<3; ++i){
+        VectorXd v = VectorXd::Random(10);
+        A.conservativeResize(A.rows()+1, A.cols());
+        A.row(A.rows()-1) = v;
+        PRINT_MAT(A);
+    }
 }
