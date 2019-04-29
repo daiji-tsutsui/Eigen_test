@@ -32,6 +32,9 @@ void Matrix_Rowwise_Test();
 void Matrix_Block_Test();
 void Matrix_Block_Subst_Test();
 void Matrix_Row_Col_Subst_Test();
+void Matrix_Row_Col_Calc_Test();
+void Matrix_log_product_Test();
+void Matrix_colwise_initialize_Test();
 void Matrix_Row_Vector_Test();
 void Matrix_Append_Test();
 
@@ -44,20 +47,20 @@ int main(int argc, const char * argv[]) {
 //    B(0,1) = 2;
 //    B(1,0) = 5;
 //    cout << A << endl;
-	
-	
-//	MatrixXd A1 = Matrix_Subroutine_Survival_Test1();
-//	MatrixXd* A2 = Matrix_Subroutine_Survival_Test2();
-//	PRINT_MAT(A1);
-//	PRINT_MAT(*A2);
-//	//どちらでも正しく返すことができる -> 解放ができていないのでは？
-	
-//	Matrix_memory_check(100000);
-//	//なぜだかわからないが，メモリの解放はできているらしい．
-	
+    
+    
+//    MatrixXd A1 = Matrix_Subroutine_Survival_Test1();
+//    MatrixXd* A2 = Matrix_Subroutine_Survival_Test2();
+//    PRINT_MAT(A1);
+//    PRINT_MAT(*A2);
+//    //どちらでも正しく返すことができる -> 解放ができていないのでは？
+    
+//    Matrix_memory_check(100000);
+//    //なぜだかわからないが，メモリの解放はできているらしい．
+    
 	
     Matrix_To_Vector_Test();
-	
+    
     return 0;
 }
 
@@ -162,88 +165,88 @@ void Matrix_RowCol_Major_Test(){
 }
 
 void Matrix_speed_check(int n){
-	int k;
-	clock_t start = clock();
-	MatrixXd A = MatrixXd::Random(500,500);        // ランダム
-	MatrixXd B(500,500);
-	for(k = 0; k < n; k++){
-		B = A * A;
-	}
-	clock_t end = clock();
-	cout << "time = " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n" << "\n";
-	getchar();
+    int k;
+    clock_t start = clock();
+    MatrixXd A = MatrixXd::Random(500,500);        // ランダム
+    MatrixXd B(500,500);
+    for(k = 0; k < n; k++){
+        B = A * A;
+    }
+    clock_t end = clock();
+    cout << "time = " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n" << "\n";
+    getchar();
 }
 
 void Matrix_Copy_Swap_Test(){
-	/* コピーおよびスワップ（交換）*/
-	PRINT_FNC;
-	
-	MatrixXd A_orig = MatrixXd::Random(3,3);
-	MatrixXd A_dump = A_orig;  /* ディープコピー（参照でない！） */
-	
-	A_orig(0,0) = 1111;
-	
-	/* 一方を変更しても他方には影響しない */
-	PRINT_MAT(A_orig);
-	PRINT_MAT(A_dump);
-	
-	/* スワッピング！ */
-	cout << "  (Swapping A_orig <--> A_dump)" << endl << endl;
-	A_orig.swap(A_dump);
-	PRINT_MAT(A_orig);
-	PRINT_MAT(A_dump);
+    /* コピーおよびスワップ（交換）*/
+    PRINT_FNC;
+    
+    MatrixXd A_orig = MatrixXd::Random(3,3);
+    MatrixXd A_dump = A_orig;  /* ディープコピー（参照でない！） */
+    
+    A_orig(0,0) = 1111;
+    
+    /* 一方を変更しても他方には影響しない */
+    PRINT_MAT(A_orig);
+    PRINT_MAT(A_dump);
+    
+    /* スワッピング！ */
+    cout << "  (Swapping A_orig <--> A_dump)" << endl << endl;
+    A_orig.swap(A_dump);
+    PRINT_MAT(A_orig);
+    PRINT_MAT(A_dump);
 }
 
 MatrixXd Matrix_Subroutine_Survival_Test1(){
-	PRINT_FNC;
-	
-	MatrixXd A1 = MatrixXd::Random(3,3);
-	PRINT_MAT(A1);
-	
-	return A1;
+    PRINT_FNC;
+    
+    MatrixXd A1 = MatrixXd::Random(3,3);
+    PRINT_MAT(A1);
+    
+    return A1;
 }
 
 MatrixXd* Matrix_Subroutine_Survival_Test2(){
-	PRINT_FNC;
-	
-	MatrixXd* A2; A2 = new MatrixXd(3,3);
-	MatrixXd B = MatrixXd::Random(3,3); *A2 = B;
-	PRINT_MAT(*A2);
-	
-	return A2;
+    PRINT_FNC;
+    
+    MatrixXd* A2; A2 = new MatrixXd(3,3);
+    MatrixXd B = MatrixXd::Random(3,3); *A2 = B;
+    PRINT_MAT(*A2);
+    
+    return A2;
 }
 
 void Matrix_memory_check(int n){
-	int k;
-	clock_t start = clock();
-	MatrixXd A;
-	for(k = 0; k < n; k++){
-		A = Matrix_Subroutine_Survival_Test1();	//代入処理のときに元のAのメモリは解放される？
-	}
-	clock_t end = clock();
-	cout << "time = " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n" << "\n";
-	getchar();
+    int k;
+    clock_t start = clock();
+    MatrixXd A;
+    for(k = 0; k < n; k++){
+        A = Matrix_Subroutine_Survival_Test1();    //代入処理のときに元のAのメモリは解放される？
+    }
+    clock_t end = clock();
+    cout << "time = " << (double)(end - start) / CLOCKS_PER_SEC << "[sec]\n" << "\n";
+    getchar();
 }
 
 void Array_Calculation_Test(){
-	MatrixXd A = MatrixXd::Random(3,3);
-	PRINT_MAT(A);
-	PRINT_MAT(A * A);
-	
-	MatrixXd B;
-	B = A.array() * A.array();
-	PRINT_MAT(B);
-	
-	PRINT_MAT(A.array().pow(2.0));
-	
-	PRINT_MAT(A);
-	PRINT_MAT(A.array().min(0.5).max(-0.5));
-	PRINT_MAT((A.array() > 0.0));
-	
-	ArrayXXd X = A;
-	PRINT_MAT(X);
-	PRINT_MAT(X.min(0.5).max(-0.5));
-	PRINT_MAT((X > 0.0));
+    MatrixXd A = MatrixXd::Random(3,3);
+    PRINT_MAT(A);
+    PRINT_MAT(A * A);
+    
+    MatrixXd B;
+    B = A.array() * A.array();
+    PRINT_MAT(B);
+    
+    PRINT_MAT(A.array().pow(2.0));
+    
+    PRINT_MAT(A);
+    PRINT_MAT(A.array().min(0.5).max(-0.5));
+    PRINT_MAT((A.array() > 0.0));
+    
+    ArrayXXd X = A;
+    PRINT_MAT(X);
+    PRINT_MAT(X.min(0.5).max(-0.5));
+    PRINT_MAT((X > 0.0));
     
     B = A.transpose() * A;
     PRINT_MAT2(B,"B = A^T * A");
@@ -254,12 +257,12 @@ void Array_Calculation_Test(){
 }
 
 void Matrix_To_Vector_Test(){
-	MatrixXd A;
-	VectorXd v = VectorXd::Random(3);
+    MatrixXd A;
+    VectorXd v = VectorXd::Random(3);
 	
-	PRINT_MAT(v);
-	A = v;
-	PRINT_MAT(A);
+    PRINT_MAT(v);
+    A = v;
+    PRINT_MAT(A);
     
     A = MatrixXd::Random(3,2);
     PRINT_MAT(A);
@@ -277,57 +280,100 @@ void Matrix_To_Vector_Test(){
 }
 
 void Matrix_Rowwise_Test(){
-	MatrixXd A = MatrixXd::Random(3,4);
-	VectorXd v(4);
-	v << 1, 2, 3, 4;
-	
-	PRINT_MAT(A);
-	A.rowwise() += v.transpose();	// rowwiseで足したければ，横ベクトルでなくてはならない．
-	PRINT_MAT(A);
+    MatrixXd A = MatrixXd::Random(3,4);
+    VectorXd v(4);
+    v << 1, 2, 3, 4;
+    
+    PRINT_MAT(A);
+    A.rowwise() += v.transpose();    // rowwiseで足したければ，横ベクトルでなくてはならない．
+    PRINT_MAT(A);
 }
 
 void Matrix_Block_Test(){
-	MatrixXd m(4,4);
-	m <<  1, 2, 3, 4,
-		5, 6, 7, 8,
-		9,10,11,12,
-		13,14,15,16;
-	cout << "Block in the middle" << endl;
-	cout << m.block<2,2>(1,1) << endl << endl;
-	for (int i = 1; i <= 4; ++i) {
-		cout << "Block of size " << i << "x" << i << endl;
-		cout << m.block(0,0,i,i) << endl << endl;
-	}
+    MatrixXd m(4,4);
+    m <<  1, 2, 3, 4,
+        5, 6, 7, 8,
+        9,10,11,12,
+        13,14,15,16;
+    cout << "Block in the middle" << endl;
+    cout << m.block<2,2>(1,1) << endl << endl;
+    for (int i = 1; i <= 4; ++i) {
+        cout << "Block of size " << i << "x" << i << endl;
+        cout << m.block(0,0,i,i) << endl << endl;
+    }
 }
 
 void Matrix_Block_Subst_Test(){
-//	ArrayXXd a = ArrayXXd::Constant(4,4,0.1);	//Arrayでも同様．
-	MatrixXd a = MatrixXd::Constant(4,4,0.1);
-	PRINT_MAT(a);
-	
-	MatrixXd m(2,2);
-	m <<  1, 2,
-		3, 4;
-	PRINT_MAT(m);
-	
-	a.block<2,2>(1,1) = m;
-	PRINT_MAT(a);
-	
-	a.block(0,0,2,3) = a.block(2,1,2,3);
-	PRINT_MAT(a);
+//    ArrayXXd a = ArrayXXd::Constant(4,4,0.1);    //Arrayでも同様．
+    MatrixXd a = MatrixXd::Constant(4,4,0.1);
+    PRINT_MAT(a);
+    
+    MatrixXd m(2,2);
+    m <<  1, 2,
+        3, 4;
+    PRINT_MAT(m);
+    
+    a.block<2,2>(1,1) = m;
+    PRINT_MAT(a);
+    
+    a.block(0,0,2,3) = a.block(2,1,2,3);
+    PRINT_MAT(a);
 }
 
 void Matrix_Row_Col_Subst_Test(){
-	MatrixXd m(3,3);
-	m << 1,2,3,
-		4,5,6,
-		7,8,9;
-	PRINT_MAT2(m,"Here is the matrix m:");
-	PRINT_MAT(m.row(1));
-	m.col(2) += 3 * m.col(0);
-	PRINT_MAT2(m,"m.col(2) += 3 * m.col(0)");
+    MatrixXd m(3,3);
+    m << 1,2,3,
+        4,5,6,
+        7,8,9;
+    PRINT_MAT2(m,"Here is the matrix m:");
+    PRINT_MAT(m.row(1));
+    m.col(2) += 3 * m.col(0);
+    PRINT_MAT2(m,"m.col(2) += 3 * m.col(0)");
 }
 
+void Matrix_Row_Col_Calc_Test(){
+	VectorXd v(3); v << 1,2,3;
+	VectorXd exp_v = (v.array() - v.maxCoeff()).exp();
+	VectorXd sm_v = exp_v / exp_v.sum();
+	PRINT_MAT(v);
+	PRINT_MAT(exp_v);
+	PRINT_MAT(sm_v);
+	
+	MatrixXd A(3,3);
+	A << 1, 2, 3,
+		4, 5, 6,
+		7, 8, 9;
+	MatrixXd exp_A = (A.colwise() - A.rowwise().maxCoeff()).array().exp();
+	MatrixXd sm_A = exp_A.array().colwise() * (exp_A.rowwise().sum()).array().inverse();
+	PRINT_MAT(A);
+	PRINT_MAT(exp_A);
+	PRINT_MAT(sm_A);
+}
+
+void Matrix_log_product_Test(){
+	MatrixXd A = MatrixXd::Random(4,4);
+	A = A.array() - A.minCoeff() + 0.1;
+	VectorXd v = VectorXd::Random(4);
+	v = v.array() - v.minCoeff() + 0.1;
+	VectorXd u;
+	
+	PRINT_MAT(A);
+	PRINT_MAT(v);
+	PRINT_MAT(A*v);
+	
+	MatrixXd log_A = A.array().log();
+	VectorXd log_v = v.array().log();
+	PRINT_MAT(((log_A.rowwise() + log_v.transpose()).array().exp()).rowwise().sum());
+}
+
+void Matrix_colwise_initialize_Test(){
+	Matrix<double,3,1> v[3];
+	for(int i = 0; i < 3; i++){
+		v[i] << 1,2,3;
+	}
+	Matrix<double,3,3> a;
+	a << v[0], v[1], v[2];
+	PRINT_MAT(a);
 void Matrix_Row_Vector_Test(){
     MatrixXd A = MatrixXd::Random(3,10);
     PRINT_MAT(A);
