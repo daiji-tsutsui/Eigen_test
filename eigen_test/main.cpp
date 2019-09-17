@@ -374,6 +374,8 @@ void Matrix_colwise_initialize_Test(){
 	Matrix<double,3,3> a;
 	a << v[0], v[1], v[2];
 	PRINT_MAT(a);
+}
+
 void Matrix_Row_Vector_Test(){
     MatrixXd A = MatrixXd::Random(3,10);
     PRINT_MAT(A);
