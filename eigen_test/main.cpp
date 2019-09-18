@@ -37,6 +37,8 @@ void Matrix_log_product_Test();
 void Matrix_colwise_initialize_Test();
 void Matrix_Row_Vector_Test();
 void Matrix_Append_Test();
+void Matrix_Comp_OP_Test1();
+void Matrix_Comp_OP_Test2();
 
 int main(int argc, const char * argv[]) {
     
@@ -59,7 +61,7 @@ int main(int argc, const char * argv[]) {
 //    //なぜだかわからないが，メモリの解放はできているらしい．
     
 	
-    Matrix_To_Vector_Test();
+    Matrix_Block_Test();
     
     return 0;
 }
@@ -295,11 +297,12 @@ void Matrix_Block_Test(){
         5, 6, 7, 8,
         9,10,11,12,
         13,14,15,16;
+    PRINT_MAT(m);
     cout << "Block in the middle" << endl;
     cout << m.block<2,2>(1,1) << endl << endl;
-    for (int i = 1; i <= 4; ++i) {
+    for (int i = 1; i <= 3; ++i) {
         cout << "Block of size " << i << "x" << i << endl;
-        cout << m.block(0,0,i,i) << endl << endl;
+        cout << m.block(1,0,i,i) << endl << endl;
     }
 }
 
@@ -381,6 +384,7 @@ void Matrix_Row_Vector_Test(){
     PRINT_MAT(A);
     PRINT_MAT(A(5));
     PRINT_MAT(A.block(0,0,1,10));
+    PRINT_MAT(A.row(0));
 }
 
 void Matrix_Append_Test(){
@@ -393,4 +397,36 @@ void Matrix_Append_Test(){
         A.row(A.rows()-1) = v;
         PRINT_MAT(A);
     }
+}
+
+// ``C++で線形代数を''より
+void Matrix_Comp_OP_Test1(){
+//    // 行列の各成分に対して条件判定して bool 型の行列を返す
+//    PRINT_FNC;
+//
+//    MatrixXd A = MatrixXd::Identity(3,3);
+//
+//    Matrix&lt;bool, dynamic, dynamic&gt; B = A.array()&lt;1.0; // 比較
+//
+//    PRINT_MAT(A);
+//    PRINT_MAT2(B, "A<1.0");
+}
+
+void Matrix_Comp_OP_Test2(){
+    /* 行列の各要素が条件をみたすかどうかチェック
+     * (all) すべての要素に対して満たすか？
+     * (any) どれかひとつの要素に対して満たすか？
+     * (count) 条件を満たす要素数
+     */
+    PRINT_FNC;
+    
+    MatrixXd A = MatrixXd::Identity(3,3);
+    
+    PRINT_MAT(A);
+    cout << "Does A(i,j)<1.0 hold for all elements? : " << (A.array()<1.0).all() << endl;
+    cout << "Does A(i,j)<2.0 hold for all elements? : " << (A.array()<2.0).all() << endl;
+    cout << "Does A(i,j)<1.0 hold for any elements? : " << (A.array()<1.0).any() << endl;
+    cout << "How many elements do A(i,j)<1.0 hold?  : " << (A.array()<1.0).count() << endl;
+    
+    cout << endl;
 }
